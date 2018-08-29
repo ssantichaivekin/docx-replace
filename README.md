@@ -2,12 +2,12 @@
 Replace texts in docx files using docx-python library. Call:
 
 ```bash
-python3 docx-replace original-file-name.docx old_text new_text options
-python3 docx-replace original-file-name.docx --spec-file replacement-file-name.csv
-python3 docx-replace original-file-name.docx --spec-file replacement-file-name.csv --dest destination-file-name.docx
+python3 docx-replace orig.docx old_text new_text options
+python3 docx-replace orig.docx --spec-file replace_spec.csv
+python3 docx-replace orig.docx --spec-file replace_spec.csv --dest dest.docx
 ```
 
-If a replacement-file-name.csv is specified, then it will read the csv:
+If a replace_spec.csv is specified, then it will read the csv:
 
 ```csv
 old_text_1,new_text_1,
