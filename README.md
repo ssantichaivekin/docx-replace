@@ -15,7 +15,8 @@ old_text_1,new_text_1,
 old_text_2,new_text_2,options
 ```
 
-This will replace all occurances of *old_text_1* with *new_text_1*, and it will (maybe?) replace *old_text_2* with *new_text_2* according to the options set.
+This will replace all occurances of *old_text_1* with *new_text_1*, and it will
+replace *old_text_2* with *new_text_2* according to the local options set.
 Note that if you want to replace a segment in document, the segment must be under the same format and not seperated by a new line.
 You cannot replace a segment like **th***is*.
 
