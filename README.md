@@ -2,6 +2,7 @@
 Replace texts in docx files using docx-python library. Call:
 
 ```bash
+python3 docx-replace orig.docx old_text new_text
 python3 docx-replace orig.docx old_text new_text options
 python3 docx-replace orig.docx --spec-file replace_spec.csv
 python3 docx-replace orig.docx --spec-file replace_spec.csv --dest dest.docx
