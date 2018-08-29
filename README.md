@@ -23,9 +23,9 @@ You can specify multiple options seperated by space.
 
 | Options in csv file | Meaning |
 |---------|---------|
-| decrease-size-*maxlen*-*decfontsize* | If 'new_text_1' is longer than *maxlen*, decrease the font size of new_text_1 by *decfontsize* |
+| decrease-size-**maxlen**-**decfontsize** | If 'new_text_1' is longer than **maxlen**, decrease the font size of new_text_1 by **decfontsize** |
 
-| Global options appended to the end of the command | Meaning |
+| Global options | Meaning |
 |---------|---------|
 | --square-bracket     | Instead of replacing 'old_text_1' with 'new_text_1', replace '[old_text_1]' with 'new_text_1' |
 | --remove-empty-row-if-overflow | Remove an empty row from a table in the document if the resulting document has more total page number than the original. |
