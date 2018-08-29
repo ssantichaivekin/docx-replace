@@ -2,7 +2,7 @@
 Replace texts in docx files using docx-python library. Call:
 
 ```bash
-python3 docx-replace original-file-name.docx textA textB options
+python3 docx-replace original-file-name.docx old_text new_text options
 python3 docx-replace original-file-name.docx --spec-file replacement-file-name.csv
 python3 docx-replace original-file-name.docx --spec-file replacement-file-name.csv --target destination-file-name.docx
 ```
@@ -10,11 +10,11 @@ python3 docx-replace original-file-name.docx --spec-file replacement-file-name.c
 If a replacement-file-name.csv is specified, then it will read the csv:
 
 ```csv
-text1A,text1B,
-text2A,text2B,options
+old_text_1,new_text_1,
+old_text_2,new_text_2,options
 ```
 
-This will replace all occurances of text1A with text1B, and it will (maybe?) replace text2A with text2B according to the options set.
+This will replace all occurances of *old_text_1* with *new_text_1*, and it will (maybe?) replace *old_text_2* with *new_text_2* according to the options set.
 Note that if you want to replace a segment in document, the segment must be under the same format and not seperated by a new line.
 You cannot replace a segment like **th***is*.
 
@@ -22,10 +22,10 @@ You can specify multiple options seperated by space.
 
 | Options in csv file | Meaning |
 |---------|---------|
-| decrease-size-*maxlen*-*decfontsize* | If 'text1B' is longer than *maxlen*, decrease the font size of text1B by *decfontsize* |
+| decrease-size-*maxlen*-*decfontsize* | If 'new_text_1' is longer than *maxlen*, decrease the font size of new_text_1 by *decfontsize* |
 
 | Global options appended to the end of the command | Meaning |
 |---------|---------|
-| --square-bracket     | Instead of replacing 'text1A' with 'text1B', replace '[text1A]' with 'text1B' |
-| --remove-empty-row-if-overflow | Remove an empty row from the document if the resulting document has more total page number than the original. |
+| --square-bracket     | Instead of replacing 'old_text_1' with 'new_text_1', replace '[old_text_1]' with 'new_text_1' |
+| --remove-empty-row-if-overflow | Remove an empty row from a table in the document if the resulting document has more total page number than the original. |
 
