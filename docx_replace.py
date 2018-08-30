@@ -46,6 +46,7 @@ def replaceRunWithRegex(run, pattern, repl, font_options = []) :
 def enumerateRun(document) :
     for para in document.paragraphs :
         for run in para.runs :
+            # print(run.text)
             yield run
 
     # replace in tables
@@ -54,6 +55,7 @@ def enumerateRun(document) :
             for cell in row.cells :
                 for para in cell.paragraphs :
                     for run in para.runs :
+                        # print(run.text)
                         yield run
 
 def replace(document, old_text, new_text, font_options = []) :

@@ -1,4 +1,4 @@
 .DS_Store
 __pycache__
-demo2.docx
+demo*.docx
 ~*.docx
