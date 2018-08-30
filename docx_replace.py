@@ -1,6 +1,7 @@
 from docx import Document
 from docx.shared import Pt
 import json
+import re
 
 ## replace text in runs :
 
@@ -19,7 +20,7 @@ def applyOptions(run, font_options = []) :
     
     # apply options:
     for option in font_options :
-        if option['name'] == 'decrease-size' :
+        if option['name'] == 'decrease_size' :
             decreaseSizeOption(run, *option[args])
             
 
@@ -28,22 +29,24 @@ def replaceRun(run, old_text, new_text, font_options = []) :
     Replace occurances of textA with textB in a run in place,
     Font options can be specified.
     '''
+    # special option :
     old_run_text = run.text
     new_run_text = old_run_text.replace(old_text, new_text)
     if old_run_text != new_run_text :
         run.text = new_run_text
         applyOptions(run, font_options)
 
-def replace(document, old_text, new_text, font_options = []) :
-    '''
-    Replace occurances of textA with textB in docx document in place,
-    preserving original style of textA. Font options can be specified
-    to change the style of the newly replaced textB.
-    '''
-    # replace in paragraphs
+def replaceRunWithRegex(run, pattern, repl, font_options = []) :
+    old_run_text = run.text
+    new_run_text = re.sub(pattern, repl, old_run_text)
+    if old_run_text != new_run_text :
+        run.text = new_run_text
+        applyOptions(run, font_options)
+
+def enumerateRun(document) :
     for para in document.paragraphs :
         for run in para.runs :
-            replaceRun(run, old_text, new_text, font_options)
+            yield run
 
     # replace in tables
     for table in document.tables :
@@ -51,7 +54,20 @@ def replace(document, old_text, new_text, font_options = []) :
             for cell in row.cells :
                 for para in cell.paragraphs :
                     for run in para.runs :
-                        replaceRun(run, old_text, new_text, font_options)
+                        yield run
+
+def replace(document, old_text, new_text, font_options = []) :
+    '''
+    Replace occurances of textA with textB in docx document in place,
+    preserving original style of textA. Font options can be specified
+    to change the style of the newly replaced textB.
+    '''
+    for run in enumerateRun(document) :
+        replaceRun(run, old_text, new_text, font_options)
+
+def replaceWithRegex(document, pattern, repl, font_options = []) :
+    for run in enumerateRun(document) :
+        replaceRunWithRegex(run, pattern, repl, font_options)
 
 def multiReplace(document, replacement_list, global_options) :
     '''
@@ -65,6 +81,7 @@ def multiReplace(document, replacement_list, global_options) :
         open_brace = global_options['use_braces'][0]
         close_brace = global_options['use_braces'][1]
     remove_empty_braces = 'remove_empty_braces' in global_options and global_options['remove_empty_braces']
+    remove_unreplaced_braces = 'remove_unreplaced_braces' in global_options and global_options['remove_unreplaced_braces']
 
     # do the work :
     for replacement in replacement_list:
@@ -74,6 +91,8 @@ def multiReplace(document, replacement_list, global_options) :
             options = replacement['options']
         else :
             options = []
+        if remove_unreplaced_braces :
+            options += []
         if use_braces :
             old_text = open_brace + old_text + close_brace
         replace(document, old_text, new_text, options)
@@ -81,8 +100,13 @@ def multiReplace(document, replacement_list, global_options) :
     if remove_empty_braces :
         old_text = open_brace + close_brace
         replace(document, old_text, '')
-
-
+    
+    if remove_unreplaced_braces :
+        re_open_brace = re.escape(open_brace)
+        re_close_brace = re.escape(close_brace)
+        # maps anything that is open_brace...close_brace (non greedy)
+        re_pattern = '%s.*?%s' % (re_open_brace, re_close_brace)
+        replaceWithRegex(document, re_pattern, '')
 
 ## read / write
 
@@ -111,6 +135,7 @@ if __name__ == '__main__' :
     parser.add_argument('--dest')
     parser.add_argument('--use-braces', nargs=2, default=None)
     parser.add_argument('--remove-empty-braces', action='store_true')
+    parser.add_argument('--remove-unreplaced-braces', action='store_true')
     parser.add_argument('--remove-empty-row', type=int)
 
     args = parser.parse_args()

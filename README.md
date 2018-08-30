@@ -49,6 +49,7 @@ You can specify multiple options seperated by space.
 | --dest | Specify destination. |
 | --use-braces **braces_open** **braces_close** | If braces are '[' and ']', instead of replacing 'old_text_1' with 'new_text_1', replace '[old_text_1]' with 'new_text_1'. |
 | --remove-empty | If --use-braces is turned on, this option will replace '[]' with ''. |
+| --remove-unreplaced-braces | Remove all unreplaced braces. |
 | --remove-empty-row **num** | Remove **num** empty rows from a table in the document. |
 
 Future features :
