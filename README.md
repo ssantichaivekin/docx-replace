@@ -4,13 +4,30 @@ Replace texts in docx files using docx-python library. Call:
 ```bash
 python3 docx-replace orig.docx old_text new_text
 python3 docx-replace orig.docx old_text new_text options
-python3 docx-replace orig.docx --spec-file replace_spec.csv
-python3 docx-replace orig.docx --spec-file replace_spec.csv --dest dest.docx
+python3 docx-replace orig.docx --spec-file replace_spec.json
+python3 docx-replace orig.docx --spec-file replace_spec.json --dest dest.docx
 ```
 
-If a replace_spec.csv is specified, then it will read the csv:
+If a replace_spec.json is specified, then it will read the json:
 
-```csv
+```json
+[
+    {
+        "old_text": "old_text_1", 
+        "new_text": "new_text_1", 
+        "options": []
+    },
+    {
+        "old_text": "old_text_2", 
+        "new_text": "new_text_2", 
+        "options": [
+            {
+                "name": "decrease-size", 
+                "args": [50, 2]
+            }
+        ]
+    }
+]
 old_text_1,new_text_1,
 old_text_2,new_text_2,options
 ```
@@ -22,12 +39,21 @@ You cannot replace a segment like **th***is*.
 
 You can specify multiple options seperated by space.
 
-| Options in csv file | Meaning |
+| Options in json file | Meaning |
 |---------|---------|
-| decrease-size-**maxlen**-**decfontsize** | If 'new_text_1' is longer than **maxlen**, decrease the font size of new_text_1 by **decfontsize** |
+| decrease-size **maxlen** **decfontsize** | If 'new_text_1' is longer than **maxlen**, decrease the font size of new_text_1 by **decfontsize** |
 
 | Global options | Meaning |
 |---------|---------|
-| --square-bracket     | Instead of replacing 'old_text_1' with 'new_text_1', replace '[old_text_1]' with 'new_text_1' |
-| --remove-empty-row-if-overflow | Remove an empty row from a table in the document if the resulting document has more total page number than the original. |
+| --spec-file | use old_text and new_text from the json file. |
+| --dest | Specify destination. |
+| --square-bracket     | Instead of replacing 'old_text_1' with 'new_text_1', replace '[old_text_1]' with 'new_text_1'. |
+| --remove-empty-row **num** | Remove **num** empty rows from a table in the document. |
+
+Future features :
+ Global options | Meaning |
+|---------|---------|
+| --sed **sed_arg**| use sed argument |
+| --regex **old_text_re** **new_text_re** | use python regex argument |
+
 
