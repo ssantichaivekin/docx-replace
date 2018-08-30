@@ -19,8 +19,8 @@ def applyOptions(run, font_options = []) :
     
     # apply options:
     for option in font_options :
-        if option[0] == 'decrease-size' :
-            decreaseSizeOption(run, option[1], option[2])
+        if option['name'] == 'decrease-size' :
+            decreaseSizeOption(run, *option[args])
             
 
 def replaceRun(run, old_text, new_text, font_options = []) :
@@ -53,12 +53,43 @@ def replace(document, old_text, new_text, font_options = []) :
                     for run in para.runs :
                         replaceRun(run, old_text, new_text, font_options)
 
+def multiReplace(document, replacement_list, global_options) :
+    '''
+    Replace using multiple old text and new text from the list.
+    You can also specify more global options using the global_options dict.
+    Possible options: use_braces = ['a', 'b'], remove_empty_braces = True
+    '''
+    # parse global options :
+    use_braces = 'use_braces' in global_options and len(global_options['use_braces']) == 2
+    if use_braces :
+        open_brace = global_options['use_braces'][0]
+        close_brace = global_options['use_braces'][1]
+    remove_empty_braces = 'remove_empty_braces' in global_options and global_options['remove_empty_braces']
+
+    # do the work :
+    for replacement in replacement_list:
+        old_text = replacement['old_text']
+        new_text = replacement['new_text']
+        if 'options' in replacement :
+            options = replacement['options']
+        else :
+            options = []
+        if use_braces :
+            old_text = open_brace + old_text + close_brace
+        replace(document, old_text, new_text, options)
+
+    if remove_empty_braces :
+        old_text = open_brace + close_brace
+        replace(document, old_text, '')
+
+
+
 ## read / write
 
-def readReplaceSpecsFromJson(jsonfilepath) :
-    with open(jsonfilepath, r) as jsonfile :
-        replace_specs = json.load(jsonfile)
-        return replace_specs
+def readReplaceListFromJson(jsonfilepath) :
+    with open(jsonfilepath, 'r') as jsonfile :
+        replacement_list = json.load(jsonfile)
+        return replacement_list
 
 ## demo
 
@@ -76,15 +107,16 @@ if __name__ == '__main__' :
     parser.add_argument('original_docx_path')
     parser.add_argument('old_text', nargs='?', default=None)
     parser.add_argument('new_text', nargs='?', default=None)
-    parser.add_argument('--spec-file')
+    parser.add_argument('--replace-list-file')
     parser.add_argument('--dest')
-    parser.add_argument('--square-bracket', action='store_true')
+    parser.add_argument('--use-braces', nargs=2, default=None)
+    parser.add_argument('--remove-empty-braces', action='store_true')
     parser.add_argument('--remove-empty-row', type=int)
 
     args = parser.parse_args()
     
     # input validity checks
-    if not args.old_text and not args.spec_file :
+    if not args.old_text and not args.replace_list_file :
         raise Exception('You must specify either old_text and new_text argument or use a json spec file')
     
     if args.old_text and not args.new_text :
@@ -92,22 +124,12 @@ if __name__ == '__main__' :
 
     # process
     document = Document(args.original_docx_path)
-    if not args.spec_file :
-        old_text = args.old_text
-        new_text = args.new_text
-        if args.square_bracket :
-            old_text = '[' + old_text + ']'
-        replace(document, old_text, new_text)
+    if args.replace_list_file :
+        replace_list = readReplaceListFromJson(args.replace_list_file)
     else :
-        # use file
-        replace_specs = readReplaceSpecsFromJson(args.spec_file)
-        for replace_spec in replace_specs:
-            old_text = replace_spec.old_text
-            new_text = replace_spec.new_text
-            options = replace_spec.options
-            if args.square_bracket :
-                old_text = '[' + old_text + ']'
-            replace(document, old_text, new_text, options)
+        replace_list = [{ "old_text": args.old_text, "new_text": args.new_text }]
+    
+    multiReplace(document, replace_list, vars(args))
     
     # save
     dest = args.dest or args.original_docx_path

@@ -4,11 +4,11 @@ Replace texts in docx files using docx-python library. Call:
 ```bash
 python3 docx-replace orig.docx old_text new_text
 python3 docx-replace orig.docx old_text new_text options
-python3 docx-replace orig.docx --spec-file replace_spec.json
-python3 docx-replace orig.docx --spec-file replace_spec.json --dest dest.docx
+python3 docx-replace orig.docx --replace-list-file replace_list.json
+python3 docx-replace orig.docx --replace-list-file replace_list.json --dest dest.docx
 ```
 
-If a replace_spec.json is specified, then it will read the json:
+If a replace_list_file.json is specified, then it will read the json:
 
 ```json
 [
@@ -45,9 +45,10 @@ You can specify multiple options seperated by space.
 
 | Global options | Meaning |
 |---------|---------|
-| --spec-file | use old_text and new_text from the json file. |
+| --replace-list-file | use old_text and new_text from the json file. |
 | --dest | Specify destination. |
-| --square-bracket     | Instead of replacing 'old_text_1' with 'new_text_1', replace '[old_text_1]' with 'new_text_1'. |
+| --use-braces **braces_open** **braces_close** | If braces are '[' and ']', instead of replacing 'old_text_1' with 'new_text_1', replace '[old_text_1]' with 'new_text_1'. |
+| --remove-empty | If --use-braces is turned on, this option will replace '[]' with ''. |
 | --remove-empty-row **num** | Remove **num** empty rows from a table in the document. |
 
 Future features :
