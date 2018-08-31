@@ -53,7 +53,7 @@ You can specify multiple options seperated by space.
 | --remove-empty-row **num** | Remove **num** empty rows from a table in the document. |
 
 Future features :
- Global options | Meaning |
+| Global options | Meaning |
 |---------|---------|
 | --sed **sed_arg**| use sed argument |
 | --regex **old_text_re** **new_text_re** | use python regex argument |
